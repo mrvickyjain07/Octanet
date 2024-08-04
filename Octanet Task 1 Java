@@ -1,0 +1,156 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class ATM {
+    private double balance;
+    private String pin;
+    private List<String> transactionHistory;
+
+    public ATM(String pin) {
+        this.balance = 0;
+        this.pin = pin;
+        this.transactionHistory = new ArrayList<>();
+    }
+
+    public boolean checkPin(String pin) {
+        return this.pin.equals(pin);
+    }
+
+    public double inquireBalance() {
+        return this.balance;
+    }
+
+    public boolean depositCash(double amount) {
+        if (amount > 0) {
+            this.balance += amount;
+            this.transactionHistory.add("Deposited: $" + amount);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean withdrawCash(double amount) {
+        if (amount > 0 && amount <= this.balance) {
+            this.balance -= amount;
+            this.transactionHistory.add("Withdrew: $" + amount);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean changePin(String oldPin, String newPin) {
+        if (checkPin(oldPin)) {
+            this.pin = newPin;
+            this.transactionHistory.add("PIN changed");
+            return true;
+        }
+        return false;
+    }
+
+    public List<String> getTransactionHistory() {
+        return this.transactionHistory;
+    }
+}
+
+public class ATMSimulation {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ATM userATM = new ATM("1234");
+
+        while (true) {
+            System.out.println("\nWelcome to the ATM");
+            System.out.println("1. Balance Inquiry");
+            System.out.println("2. Cash Withdrawal");
+            System.out.println("3. Cash Deposit");
+            System.out.println("4. Change PIN");
+            System.out.println("5. Transaction History");
+            System.out.println("6. Exit");
+
+            System.out.print("Choose an option: ");
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    System.out.print("Enter PIN: ");
+                    String pin = scanner.nextLine();
+                    if (userATM.checkPin(pin)) {
+                        System.out.println("Your current balance is: $" + userATM.inquireBalance());
+                    } else {
+                        System.out.println("Incorrect PIN");
+                    }
+                    break;
+
+                case "2":
+                    System.out.print("Enter PIN: ");
+                    pin = scanner.nextLine();
+                    if (userATM.checkPin(pin)) {
+                        System.out.print("Enter amount to withdraw: ");
+                        double amount = Double.parseDouble(scanner.nextLine());
+                        if (userATM.withdrawCash(amount)) {
+                            System.out.println("$" + amount + " withdrawn successfully");
+                        } else {
+                            System.out.println("Insufficient balance or invalid amount");
+                        }
+                    } else {
+                        System.out.println("Incorrect PIN");
+                    }
+                    break;
+
+                case "3":
+                    System.out.print("Enter PIN: ");
+                    pin = scanner.nextLine();
+                    if (userATM.checkPin(pin)) {
+                        System.out.print("Enter amount to deposit: ");
+                        double amount = Double.parseDouble(scanner.nextLine());
+                        if (userATM.depositCash(amount)) {
+                            System.out.println("$" + amount + " deposited successfully");
+                        } else {
+                            System.out.println("Invalid amount");
+                        }
+                    } else {
+                        System.out.println("Incorrect PIN");
+                    }
+                    break;
+
+                case "4":
+                    System.out.print("Enter old PIN: ");
+                    String oldPin = scanner.nextLine();
+                    System.out.print("Enter new PIN: ");
+                    String newPin = scanner.nextLine();
+                    if (userATM.changePin(oldPin, newPin)) {
+                        System.out.println("PIN changed successfully");
+                    } else {
+                        System.out.println("Incorrect old PIN");
+                    }
+                    break;
+
+                case "5":
+                    System.out.print("Enter PIN: ");
+                    pin = scanner.nextLine();
+                    if (userATM.checkPin(pin)) {
+                        List<String> history = userATM.getTransactionHistory();
+                        if (!history.isEmpty()) {
+                            System.out.println("Transaction History:");
+                            for (String transaction : history) {
+                                System.out.println(transaction);
+                            }
+                        } else {
+                            System.out.println("No transactions yet");
+                        }
+                    } else {
+                        System.out.println("Incorrect PIN");
+                    }
+                    break;
+
+                case "6":
+                    System.out.println("Thank you for using the ATM. Goodbye!");
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid option, please try again");
+            }
+        }
+    }
+}
